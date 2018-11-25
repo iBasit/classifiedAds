@@ -51,3 +51,6 @@ channels. Create a method to do so (do not implement the logic - make it sleep f
 second instead) and demonstrate how to asynchronously run this method for every
 ad.
 - If some of the tasks are not entirely clear - please use your best judgement. 
+
+### Bonus points
+- Configure a separate container inside docker-compose to function as a queue worker
