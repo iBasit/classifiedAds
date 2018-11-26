@@ -28,9 +28,6 @@ class AdsControllerTest extends WebTestCase
             ->setPrice(5.55)
             ->setUser($user);
 
-
-
-
         $em->persist($ad);
         $em->flush();
 
@@ -49,10 +46,28 @@ class AdsControllerTest extends WebTestCase
             'price' => '23.23',
         ];
 
+        $client->request('POST', $url, $data, [], $this->getHeaders());
+
+        $response = $client->getResponse();
+        $this->assertEquals(201, $response->getStatusCode(), $response->getContent());
+    }
+
+    public function testCreateAdsFailWithoutTokenAction()
+    {
+        $client = static::createClient();
+
+        $url = $client->getContainer()->get('router')->generate('ads_create');
+
+        $data = [
+            'title' => 'Ads #1',
+            'description' => 'facebook conversion ads',
+            'price' => '23.23',
+        ];
+
         $client->request('POST', $url, $data);
 
         $response = $client->getResponse();
-        $this->assertEquals(200, $response->getStatusCode(), $response->getContent());
+        $this->assertEquals(401, $response->getStatusCode(), $response->getContent());
     }
 
     public function testCreateAdsFailedMissingTitleAction()
@@ -66,7 +81,7 @@ class AdsControllerTest extends WebTestCase
             'price' => '23.23',
         ];
 
-        $client->request('POST', $url, $data);
+        $client->request('POST', $url, $data, [], $this->getHeaders());
 
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode(), $response->getContent());
@@ -83,7 +98,7 @@ class AdsControllerTest extends WebTestCase
             'price' => '23.23',
         ];
 
-        $client->request('POST', $url, $data);
+        $client->request('POST', $url, $data, [], $this->getHeaders());
 
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode(), $response->getContent());
@@ -100,7 +115,7 @@ class AdsControllerTest extends WebTestCase
             'description' => 'facebook conversion ads',
         ];
 
-        $client->request('POST', $url, $data);
+        $client->request('POST', $url, $data, [], $this->getHeaders());
 
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode(), $response->getContent());
@@ -119,7 +134,7 @@ class AdsControllerTest extends WebTestCase
             'price' => '34asdf',
         ];
 
-        $client->request('POST', $url, $data);
+        $client->request('POST', $url, $data, [], $this->getHeaders());
 
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode(), $response->getContent());
@@ -137,7 +152,7 @@ class AdsControllerTest extends WebTestCase
             'price' => '23.23',
         ];
 
-        $client->request('PUT', $url, $data);
+        $client->request('PUT', $url, $data, [], $this->getHeaders());
 
         $response = $client->getResponse();
         $this->assertEquals(200, $response->getStatusCode(), $response->getContent());
@@ -156,7 +171,7 @@ class AdsControllerTest extends WebTestCase
             'price' => '23.23',
         ];
 
-        $client->request('PUT', $url, $data);
+        $client->request('PUT', $url, $data, [], $this->getHeaders());
 
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode(), $response->getContent());
@@ -173,7 +188,7 @@ class AdsControllerTest extends WebTestCase
             'price' => '23.23',
         ];
 
-        $client->request('PUT', $url, $data);
+        $client->request('PUT', $url, $data, [], $this->getHeaders());
 
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode(), $response->getContent());
@@ -190,7 +205,7 @@ class AdsControllerTest extends WebTestCase
             'description' => 'facebook conversion ads',
         ];
 
-        $client->request('PUT', $url, $data);
+        $client->request('PUT', $url, $data, [], $this->getHeaders());
 
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode(), $response->getContent());
@@ -208,7 +223,7 @@ class AdsControllerTest extends WebTestCase
             'price' => '34asdf',
         ];
 
-        $client->request('PUT', $url, $data);
+        $client->request('PUT', $url, $data, [], $this->getHeaders());
 
         $response = $client->getResponse();
         $this->assertEquals(400, $response->getStatusCode(), $response->getContent());
@@ -237,5 +252,17 @@ class AdsControllerTest extends WebTestCase
 
         $this->assertArrayHasKey('email', $ads['user']);
         $this->assertArrayHasKey('name', $ads['user']);
+    }
+
+    /**
+     * setup headers array with authentication token
+     * @return array
+     */
+    private function getHeaders()
+    {
+        return [
+            'HTTP_X_AUTH_TOKEN' => "TkpJe8qr9hjbqPwCHi0n",
+            'CONTENT_TYPE' => 'application/json',
+        ];
     }
 }

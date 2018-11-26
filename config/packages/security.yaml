@@ -1,4 +1,7 @@
 security:
+    encoders:
+        Symfony\Component\Security\Core\User\UserInterface: plaintext # change for real app
+
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     providers:
         in_memory: { memory: ~ }
@@ -7,8 +10,12 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         main:
-            anonymous: true
-
+            pattern: ^/api
+            anonymous: ~
+            stateless: true
+            guard:
+                authenticators:
+                - App\Security\TokenAuthenticator
             # activate different ways to authenticate
 
             # http_basic: true
@@ -20,5 +27,5 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/api/v1/ads$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }

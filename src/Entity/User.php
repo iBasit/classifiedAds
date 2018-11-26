@@ -3,15 +3,15 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use JMS\Serializer\Annotation as Serializer;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 
 /**
  * @ORM\Entity
  * @Serializer\ExclusionPolicy("all")
  */
-class User
+class User implements UserInterface
 {
     /**
      * @ORM\Id()
@@ -22,8 +22,7 @@ class User
 
     /**
      * @var string
-     * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank()
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Serializer\Expose
      */
     private $email;
@@ -31,7 +30,6 @@ class User
     /**
      * @var string
      * @ORM\Column(type="string", length=100)
-     * @Assert\NotBlank()
      * @Serializer\Expose
      */
     private $name;
@@ -105,5 +103,44 @@ class User
         $this->token = $token;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRoles()
+    {
+        return ['ROLE_USER'];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPassword()
+    {
+        return 'noo!';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSalt()
+    {
+        return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getUsername()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function eraseCredentials()
+    {
     }
 }

@@ -37,13 +37,13 @@ class AdsController extends ApiBaseController
             $em->persist($ad);
             $em->flush();
 
-            return new Response(); // 200 empty response, we can also sent this entity back as a response
+            return new Response('', Response::HTTP_CREATED); // 200 empty response, we can also sent this entity back as a response
         } else {
             $errors = $this->getErrorsFromForm($form);
             return new JsonResponse([
-                'title' => 'There was a validation error',
+                'message' => 'There was a validation error',
                 'errors' => $errors
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -56,9 +56,8 @@ class AdsController extends ApiBaseController
 
         if (!$ad) {
             return new JsonResponse([
-                'title' => 'Object not found',
-                'errors' => []
-            ], 404);
+                'message' => 'Object not found',
+            ], Response::HTTP_NOT_FOUND);
         }
 
         $form = $this->createAPIForm(AdsType::class, $ad, ['method' => 'PUT']);
@@ -72,9 +71,9 @@ class AdsController extends ApiBaseController
         } else {
             $errors = $this->getErrorsFromForm($form);
             return new JsonResponse([
-                'title' => 'There was a validation error',
+                'message' => 'There was a validation error',
                 'errors' => $errors
-            ], 400);
+            ], Response::HTTP_BAD_REQUEST);
         }
     }
 
@@ -87,11 +86,6 @@ class AdsController extends ApiBaseController
 
         $data = $this->get('jms_serializer')->serialize($ads, 'json');
 
-        return new JsonResponse($data, 200, [], true);
-    }
-
-    protected function getUser()
-    {
-        return $this->getDoctrine()->getRepository(User::class)->find(1);
+        return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 }
