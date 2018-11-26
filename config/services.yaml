@@ -26,3 +26,8 @@ services:
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+
+    App\Listener\AdListener:
+        autowire: true
+        tags:
+            - { name: kernel.event_listener, event: ads.created, method: onCreatedAdEvent }

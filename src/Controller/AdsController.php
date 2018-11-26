@@ -6,8 +6,10 @@ namespace App\Controller;
 
 use App\Entity\Ad;
 use App\Entity\User;
+use App\Event\AdCreatedEvent;
 use App\Form\Type\AdsType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,6 +38,11 @@ class AdsController extends ApiBaseController
             $ad->setUser($user);
             $em->persist($ad);
             $em->flush();
+
+            // event on new ads
+            $event = new AdCreatedEvent($ad);
+            $dispatcher = new EventDispatcher();
+            $dispatcher->dispatch(AdCreatedEvent::NAME, $event);
 
             return new Response('', Response::HTTP_CREATED); // 200 empty response, we can also sent this entity back as a response
         } else {
