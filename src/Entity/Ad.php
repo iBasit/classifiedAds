@@ -8,7 +8,7 @@ use JMS\Serializer\Annotation as Serializer;
 
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="App\Repository\AdRepository")
  * @ORM\HasLifecycleCallbacks
  * @Serializer\ExclusionPolicy("all")
  */
@@ -25,7 +25,6 @@ class Ad
     /**
      * @var User
      * @ORM\ManyToOne(targetEntity="App\Entity\User")
-     * @Assert\NotBlank()
      * @Serializer\Expose
      */
     private $user;
